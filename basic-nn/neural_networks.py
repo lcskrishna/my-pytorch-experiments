@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as f
+import torch.nn.functional as F
 
 class Net(nn.Module):
     def __init__(self):
@@ -11,7 +11,7 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 10)
 
-    def forward(self):
+    def forward(self, x):
         x = F.max_pool2d(F.relu(self.conv1(x)), (2,2))
         x = F.max_pool2d(F.relu(self.conv2(x)), 2)
         x = x.view(-1, self.num_flat_features(x))
@@ -29,3 +29,45 @@ class Net(nn.Module):
 
 net = Net()
 print (net)	
+
+## Learnable parameters 
+params = list(net.parameters())
+print (len(params))
+print(params[0].size())
+
+
+## random input.
+in_data = torch.randn(1,1,32,32)
+out = net(in_data)
+print (out)
+
+net.zero_grad()
+out.backward(torch.randn(1,10))
+
+output = net(in_data)
+target = torch.randn(10)
+target = target.view(1, -1)
+criterion = nn.MSELoss()
+
+loss = criterion(output, target)
+
+print (loss)
+
+print (loss.grad_fn)
+print (loss.grad_fn.next_functions[0][0])
+print (loss.grad_fn.next_functions[0][0].next_functions[0][0])
+
+print ('conv1.bias.grad before backward')
+print (net.conv1.bias.grad)
+
+loss.backward()
+
+import torch.optim as optim
+optimizer = optim.SGD(net.parameters(), lr = 0.01)
+optimizer.zero_grad()
+output = net(in_data)
+loss = criterion(output, target)
+loss.backward()
+optimizer.step()
+
+
