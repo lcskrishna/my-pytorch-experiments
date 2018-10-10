@@ -6,6 +6,7 @@
 * To create a custom autograd function, we implement the class as a subfunction to torch.autograd.Function and implementing the static methods -> forward and backward.
 * torch.nn.optim package can be used as an alternative to update the weights instead of manually updating the weights.
 * To create a custom nn module, we implement a class extending torch.nn.Module and define the forward function.
+* Pytorch has the ability to execute Dynamic Graphs as compared to tensorflow which can execute static graphs.
 * In the above examples here is the analysis for 500 iterations on a CPU:
 
 Test file name | Time 
