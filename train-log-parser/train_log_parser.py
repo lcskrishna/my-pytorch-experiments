@@ -1,0 +1,68 @@
+import os
+import sys
+import argparse
+
+def read_log_file(log_file):
+    fs = open(log_file, 'r')
+    lines = fs.readlines()
+    fs.close()
+    
+    useful_lines = []
+    for i in range(len(lines)):
+        line = lines[i].rstrip()
+        if "Epoch:" in line and ("UserWarning" not in line):
+            useful_lines.append(line)
+
+    return useful_lines
+
+def extract_info(lines):
+
+    loss_values = []
+    prec1_values = []
+    epoch_values = []
+    prec5_values = []
+
+    for i in range(len(lines)):
+        line = lines[i]
+        #print (line)
+        values = line.split(' ')
+        epoch = values[1].split('][')[0].replace('[', '')
+        epoch_values.append(int(epoch))
+        loss = float(values[6])
+        loss_values.append(loss)
+        prec1 = float(values[8])
+        prec1_values.append(prec1)
+        prec5 = float(values[10])
+        prec5_values.append(prec5)
+    
+    return epoch_values, loss_values, prec1_values, prec5_values        
+
+def generate_training_loss_csv(epoch_values, loss_values):
+    
+    count = 0
+    unique_epochs = list(set(epoch_values))
+    print (len(unique_epochs))
+    print (len(epoch_values))
+    print (len(loss_values))
+    for j in range(len(unique_epochs)):
+        print (unique_epochs[j])
+    #print (len(unique_epochs))
+    #for j in range(len(epoch_values)):
+    #    epoch = epoch_values[j]
+        
+
+def main():
+    log_file = os.path.abspath(args.log_file)
+    output_prefix = args.output_prefix
+    lines = read_log_file(log_file)
+    epoch_values, loss_values, prec1_values, prec5_values = extract_info(lines)
+    generate_training_loss_csv(epoch_values, loss_values)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--log-file', type=str, required=True, help='Training log file.')
+    parser.add_argument('--output-prefix', type=str, required=False, default = 'net', help='Output prefix.')
+
+    args = parser.parse_args()
+    main()
+
