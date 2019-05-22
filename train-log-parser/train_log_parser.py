@@ -39,17 +39,24 @@ def extract_info(lines):
 
 def generate_training_loss_csv(epoch_values, loss_values):
     
-    count = 0
     unique_epochs = list(set(epoch_values))
+    losses = []
     print (len(unique_epochs))
     print (len(epoch_values))
     print (len(loss_values))
-    for j in range(len(unique_epochs)):
-        print (unique_epochs[j])
-    #print (len(unique_epochs))
-    #for j in range(len(epoch_values)):
-    #    epoch = epoch_values[j]
-        
+    for i in range(len(unique_epochs)):
+        epoch_num = unique_epochs[i]
+        print ("INFO: Current epoch number is {}".format(epoch_num))
+        tot_loss = 0
+        count = 0
+        for j in range(len(epoch_values)):
+            if epoch_num == epoch_values[j]:
+                tot_loss = tot_loss + loss_values[j]
+                count = count + 1
+        avg_loss = tot_loss / count
+        losses.append(avg_loss)
+        print (count)
+        print (avg_loss)
 
 def main():
     log_file = os.path.abspath(args.log_file)
