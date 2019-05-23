@@ -37,7 +37,7 @@ def extract_info(lines):
     
     return epoch_values, loss_values, prec1_values, prec5_values        
 
-def generate_training_loss_csv(epoch_values, loss_values):
+def generate_training_loss_csv(epoch_values, loss_values, output_prefix):
     
     unique_epochs = list(set(epoch_values))
     losses = []
@@ -58,12 +58,20 @@ def generate_training_loss_csv(epoch_values, loss_values):
         print (count)
         print (avg_loss)
 
+    fs = open(output_prefix + ".csv", "w")
+    for j in range(len(losses)):
+        line = str(j) + "," + str(losses[j]) + "\n"
+        fs.write(line)
+
+    fs.close()
+    print ("OK: generated csv for losses and epochs")
+ 
 def main():
     log_file = os.path.abspath(args.log_file)
     output_prefix = args.output_prefix
     lines = read_log_file(log_file)
     epoch_values, loss_values, prec1_values, prec5_values = extract_info(lines)
-    generate_training_loss_csv(epoch_values, loss_values)
+    generate_training_loss_csv(epoch_values, loss_values, output_prefix)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
