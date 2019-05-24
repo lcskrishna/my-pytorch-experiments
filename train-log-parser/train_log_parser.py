@@ -65,6 +65,38 @@ def generate_training_loss_csv(epoch_values, loss_values, output_prefix):
 
     fs.close()
     print ("OK: generated csv for losses and epochs")
+
+def generate_prec1_prec5_csv(epoch_values, prec1_values, prec5_values, output_prefix):
+    unique_epochs = list(set(epoch_values))
+    prec1 = []
+    prec5 = []
+    print (len(unique_epochs))
+    print (len(prec1_values))
+    print (len(prec5_values))
+    print (len(epoch_values))
+    for i in range(len(unique_epochs)):
+        epoch_num = unique_epochs[i]
+        print ("INFO: Current epoch is {}".format(epoch_num))
+        total_prec1 = 0
+        total_prec5 = 0
+        count = 0
+        for j in range(len(epoch_values)):
+            if epoch_num == epoch_values[j]:
+                total_prec1 = total_prec1 + prec1_values[j]
+                total_prec5 = total_prec5 + prec5_values[j]
+                count = count + 1
+        avg_top1 = total_prec1 / count
+        avg_top5 = total_prec5 / count
+        prec1.append(avg_top1)
+        prec5.append(avg_top5)
+
+    fs = open(output_prefix + "_top1_top5.csv", "w")
+    for j in range(len(prec1)):
+        line = str(j) + "," + str(prec1[j]) + "," + str(prec5[j]) + "\n"
+        fs.write(line)
+
+    fs.close()
+    print ("OK: generated csv for top1 and top5 for each epochs.")
  
 def main():
     log_file = os.path.abspath(args.log_file)
@@ -72,6 +104,7 @@ def main():
     lines = read_log_file(log_file)
     epoch_values, loss_values, prec1_values, prec5_values = extract_info(lines)
     generate_training_loss_csv(epoch_values, loss_values, output_prefix)
+    generate_prec1_prec5_csv(epoch_values, prec1_values, prec5_values, output_prefix)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
