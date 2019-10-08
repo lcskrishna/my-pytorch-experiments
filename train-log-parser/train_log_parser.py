@@ -13,7 +13,7 @@ def read_log_file(log_file):
         line = lines[i].rstrip()
         if "Epoch:" in line and ("UserWarning" not in line):
             useful_lines.append(line)
-        if "* Prec@1" in line:
+        if "* Prec@1" in line or ("* Acc@1" in line):
             validation_lines.append(line)
 
     return useful_lines, validation_lines
